@@ -192,20 +192,53 @@ def methodname(self, parameters):
 * passing arguments to function via args-kwargs syntax
 
 ~~~
-def function name(required, *args, **kwargs):
+def function_name(*args, **kwargs):
     "function docstring"
     function body
     return[expression]
 ~~~
 
-* required parameters of the function
 * args are positional parameters of function (tuple)
 * kwargs are key-valued parameters of the function (dict)
-* Definition: a decorator extends and modified the behaviour of a callable
-  (functions, ethods, and classes) without permantly modifying the callable
-  itself
-* Ordinary way for calling function inside another function
 
+The function call
+~~~
+>>> function_name('hello', 'world', when='now')
+~~~
+will map values to variables in the function
+~~~
+args -> ('hello', 'world')  # tuple
+kwargs -> {'when': 'now'}  # dict
+~~~
+
+---
+
+* Definition: a decorator extends and modified the behaviour of a callable
+  (functions, methods, and classes) without permantly modifying the callable
+  itself
+
+* *A decorator is a function that takes a function as in put and returns a
+function as output*
+
+~~~
+def decorator(f):
+    ...
+    
+@decorator
+def function_name(...):
+    ...
+~~~
+is equivalent to
+~~~
+def decorator(f):
+    ...
+    
+def function_name(...):
+    ...
+    
+    
+function_name = decorator(function_name)
+~~~
 ---
 
 ~~~
@@ -268,17 +301,20 @@ def hello():
 
 ~~~
 def decorator_function(func):
-    defwrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         return func(*args, **kwargs)
     return wrapper
 ~~~
 
 ---
 
-* Simple example of trace decorator
+* Example: inspect values passed to and from a function
 
 ~~~
+from functools import wraps
+
 def trace(func):
+    @wraps
     def wrapper(*args, **kwargs):
         print(
             f'TRACE: calling {func.__name__}() '
@@ -289,7 +325,7 @@ def trace(func):
             f'TRACE: {func.__name__}() '
             f'returned {original_result!r}'
         )
-        return origiginal_results
+        return original_results
     return wrapper
 ~~~
 
@@ -312,9 +348,9 @@ Hello, world
 * Decorate a class method
 
 ~~~
-def p_decorate(func):
+def as_html(func):
     def func_wrapper(*args, **kwargs):
-        return"<p>{0}</p>".format(func(*args, **kwargs))
+        return f"<p>{func(*args, **kwargs)}</p>
     return func_wrapper
     
 class Person:
@@ -322,23 +358,32 @@ class Person:
         self.name = "John"
         self.family = "Doe"
         
-    @p_decorate
-    def get_fullname(self):
-        return self.name + " " + self.family
+        
+    @as_html
+    def hello(self):
+        return f"Hello, my name is {self.name} {self.family}"
         
 ~~~
 ~~~
-my_person = Person()
-print(my_person.get_fullname())
+>>> my_person = Person("Anne", "Applebaum")
+>>> print(my_person.hello())
+<p>Hello, my name is Anne Applebaum</p>
 ~~~
 
 ---
 
-Comments on decorators:
+About decorators:
 
 * decorators is good way to avoid code duplication
 * decorators allows to write more "pythonic" and clean code
-* use wraptools to make your decorators debug friendly
+* functools.wraps make your decorators debug friendly when using multiple
+  decorators
+
+See also
+
+* https://docs.python.org/3/glossary.html#term-decorator
+* https://realpython.com/primer-on-python-decorators/
+* https://www.geeksforgeeks.org/decorators-in-python/
     </textarea>
 
     <script src="/decorators/refreeze/js/remark-latest.min.js" type="text/javascript"></script>
