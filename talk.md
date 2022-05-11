@@ -58,6 +58,7 @@ args -> ('hello', 'world')  # tuple
 kwargs -> {'when': 'now'}  # dict
 ~~~
 
+
 ---
 
 * Definition: a decorator extends and modified the behaviour of a callable
@@ -161,7 +162,7 @@ def decorator_function(func):
 from functools import wraps
 
 def trace(func):
-    @wraps
+    @wraps(func)
     def wrapper(*args, **kwargs):
         print(
             f'TRACE: calling {func.__name__}() '
